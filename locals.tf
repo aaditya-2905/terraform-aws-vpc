@@ -1,18 +1,29 @@
 locals {
-  azs = ["ap-south-1a", "ap-south-1b"]
+  # Use provided AZs or fallback to the first 3 available
+  azs = length(var.availability_zones) > 0 ? var.availability_zones : slice(data.aws_availability_zones.available.names, 0, 3)
 
-  public_subnets = [
-    "10.0.1.0/24",
-    "10.0.2.0/24"
-  ]
+  common_tags = merge(
+    {
+      Environment = try(var.environment, "dev")
+      Project     = try(var.project, "myproject")
+    },
+    var.additional_tags
+  )
 
-  private_subnets = [
-    "10.0.3.0/24",
-    "10.0.4.0/24"
-  ]
+  # Normalize subnet configurations for the module
+  public_subnets = {
+    for idx, cidr in var.public_subnet_cidr_blocks : "public-${idx}" => {
+      cidr_block = cidr
+      az         = local.azs[idx % length(local.azs)]
+      tier       = "public"
+    }
+  }
 
-  common_tags = {
-    Environment = var.environment
-    Project     = "vpc-wrapper"
+  private_subnets = {
+    for idx, cidr in var.private_subnet_cidr_blocks : "private-${idx}" => {
+      cidr_block = cidr
+      az         = local.azs[idx % length(local.azs)]
+      tier       = "private"
+    }
   }
 }
