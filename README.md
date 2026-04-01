@@ -1,4 +1,4 @@
-# Dynamic AWS VPC Wrapper Module
+# AWS VPC Wrapper Module
 
 A fully dynamic and reusable Terraform wrapper for provisioning a production-ready AWS VPC. This module uses `try()` logic for robust defaults and `for_each` for flexible subnet management, ensuring zero-error deployment even with minimal inputs.
 
@@ -9,8 +9,6 @@ A fully dynamic and reusable Terraform wrapper for provisioning a production-rea
 - **Automatic AZ Selection**: Automatically picks the first 3 Available AZs if none are provided.
 - **Flexible NAT Configuration**: Toggle between single NAT Gateway (cost-optimized) or one per AZ (high availability).
 - **Consolidated Tagging**: Automatically merges project, environment, and custom tags across all resources.
-
-## Quick Start
 
 ### Basic Usage (Minimal Inputs)
 The module will use defaults (10.0.0.0/16 VPC, no subnets unless specified).
